@@ -1,0 +1,232 @@
+//If you feel this helps you, then please contribute to LibGDX.
+//https://libgdx.badlogicgames.com/
+
+
+buildscript {
+
+    repositories {
+
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        jcenter()
+        google()
+
+    }
+
+    dependencies {
+
+        classpath 'org.wisepersist:gwt-gradle-plugin:1.0.9'
+        classpath 'com.android.tools.build:gradle:3.4.1'
+
+    }
+
+}
+
+
+allprojects {
+
+    apply plugin: "eclipse"
+    apply plugin: "idea"
+
+    ext {
+
+        minSdk = 15
+        targetSdk = 28
+        compileSdk = 28
+        buildTools = '28.0.3'
+
+        appName = 'gpgs-libgdx'
+        gdxVersion = '1.9.10'
+
+    }
+
+    repositories {
+        
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven { url "https://maven.google.com" }
+        jcenter()
+        google()
+
+        flatDir {
+            dirs 'libs'
+        }
+
+    }
+
+}
+
+
+/*
+project(":desktop") {
+    
+    apply plugin: "java-library"
+
+    dependencies {
+        
+        api project(":core")
+        api project(":gpgs-desktop")
+
+        api "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
+        api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+
+        api "com.google.android.gms:play-services-games:18.0.1"
+        api "com.google.android.gms:play-services-auth:17.0.0"
+        api "com.google.android.gms:play-services-identity:17.0.0"
+        api "com.google.android.gms:play-services-base:17.1.0"
+
+        //You should change the desktop allatori.xml file when updating the below line.  It may break if you upgrade.
+        //noinspection GradleDependency
+        api group: 'asm', name: 'asm-commons', version: '3.3.1'
+
+        //This is to help keep compatibility with Allatori obfuscation.
+        //noinspection GradlePath
+        api files('/YOUR-HOME-LINUX-DIRECTORY/Android/Sdk/platforms/android-28/android.jar')
+
+        //This is to help keep compatibility with Allatori obfuscation.  It may break if you upgrade.
+        //noinspection GradleDependency
+        api "com.android.support:support-v4:19.1.0"
+
+    }
+
+}
+
+
+project(":android") {
+
+    apply plugin: "android"
+    apply plugin: "io.objectbox"
+
+    configurations { natives }
+
+    dependencies {
+
+        api "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
+
+        //This is added for compatibility with the GPGS login library.
+        api "com.google.android.gms:play-services-games:18.0.1"
+        api "com.google.android.gms:play-services-auth:17.0.0"
+        api "com.google.android.gms:play-services-identity:17.0.0"
+        api "com.google.android.gms:play-services-base:17.1.0"
+
+        api project(":core")
+        //api project(":lvl_library")
+        api project(":gpgs-android")
+                
+        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
+        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
+        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
+        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
+        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
+
+    }
+    
+}
+
+
+project(":core") {
+    
+    apply plugin: "java-library"
+    apply plugin: 'io.objectbox'
+
+    dependencies {
+
+        api project(":gpgs-core")
+
+        api "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
+
+        //The Spine animations need to be re-saved in the most recent version of Spine before updates can take hold.
+        //Otherwise, the data will fail.
+        api "com.esotericsoftware.spine:spine-libgdx:3.7.83.1"
+
+        api "com.fasterxml.jackson.core:jackson-databind:2.9.9.3"
+        api "com.fasterxml.jackson.core:jackson-annotations:2.9.9"
+
+    }
+
+}
+*/
+
+
+project(":gpgs-android") {
+
+    configurations {
+        custom
+        compile.extendsFrom custom
+    }
+
+    eclipse {
+        project {
+            name = appName + "-gpgs-android"
+        }
+    }
+
+    dependencies {
+        if (!project.hasProperty('gms_library_version')) {
+            ext.gms_library_version = '17.0.0'
+        }
+
+        compile "com.google.android.gms:play-services-games:${gms_library_version}"
+
+        compile project(':gpgs-core')
+    }
+
+}
+
+
+project(":gpgs-core") {
+
+    apply plugin: "java-library"
+
+    configurations {
+        custom
+        compile.extendsFrom custom
+    }
+
+    eclipse {
+        project {
+            name = appName + "-gpgs-core"
+        }
+    }
+
+    dependencies {
+        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+    }
+
+}
+
+
+project(":gpgs-desktop") {
+
+    apply plugin: "java-library"
+
+    configurations {
+        custom
+        compile.extendsFrom custom
+    }
+
+    eclipse {
+        project {
+            name = appName + "-gpgs-desktop"
+        }
+    }
+
+    dependencies {
+        compile project(':gpgs-core')
+
+        compile "com.google.apis:google-api-services-games:v1-rev20190725-1.30.1"
+        compile "com.google.oauth-client:google-oauth-client-jetty:1.30.3"
+        compile "com.google.apis:google-api-services-drive:v3-rev20190926-1.30.3"
+
+    }
+
+}
+
+
+
