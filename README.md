@@ -1,5 +1,7 @@
 # gpgs-libgdx
 Obfuscation-focused OAuth 2 library for LibGDX with Google Play.
+
+(NOTE:  I'M IN THE PROCESS OF UPDATING THE ANDROID SIDE WITH THE GoogleSignInClient.)
 #
 
 This library is based off the repository at:  https://github.com/MrStahlfelge/gdx-gamesvcs
